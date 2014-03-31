@@ -18,12 +18,15 @@ catalogs = [
 def datasets(get, catalog):
     # Search an OpenDataSoft portal, and add things.
     # I chose OpenDataSoft because they care a lot about metadata.
-    raw = get(catalog + '/api/datasets/1.0/search?rows=1000000', load = True)
-    return json.loads(raw.decode('utf-8'))['datasets']
+    response = get(catalog + '/api/datasets/1.0/search?rows=1000000)
+    result = json.loads(response.text)['datasets']
+    for r in result:
+        r['catalog'] = catalog
+    return result
 
 def download(get, catalog, datasetid):
     url = '%s/explore/dataset/%s/download?format=csv' % args
-    get(url, load = False)
+    return get(url)
 
 def _run(get, catalog):
     n = 30
@@ -31,6 +34,6 @@ def _run(get, catalog):
     with ThreadPoolExecutor(n) as e:
         yield from e.map(partial(get,catalog), datasetids)
 
-def run(get):
+def all(get):
     with ThreadPoolExecutor(len(catalogs)) as e:
         yield from e.map(partial(_run, get),catalogs)
