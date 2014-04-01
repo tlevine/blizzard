@@ -22,7 +22,6 @@ def main():
     g = Graph()
     get = functools.partial(_get, datadir)
     for dataset in download.all(get):
-        print(list(dataset)); break
         logger.debug('%s, %s: Got metadata' % (dataset['catalog'], dataset['datasetid']))
         response = download.download(get, dataset['catalog'], dataset['datasetid'])
         logger.debug('%s, %s: Got spreadsheet' % (dataset['catalog'], dataset['datasetid']))
