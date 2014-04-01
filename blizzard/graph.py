@@ -1,3 +1,5 @@
+from itertools import combinations
+
 import networkx as nx
 
 class Graph(nx.Graph):
@@ -8,9 +10,13 @@ class Graph(nx.Graph):
             self.add_node(i, kind = 'index')
             self.add_node(dataset_id, kind = 'dataset', text = dataset['download'].text)
             self.add_edge(i, dataset_id)
-            for neighbor_datasetid in self.neighbors(i, data = True):
-                j = tuple(sorted(neighbor_datasetid, datasetid))
-                if neighbor_datasetid != datasetid and j not in self.edges_iter():
+
+    def refactor(self, overlap):
+        indices = (index for index,data in self.nodes(data = True) if data['kind'] == 'index')
+        for index in indices:
+            for datasets in combinations(self.neighbors(index),2):
+                a, b = tuple(sorted(_datasets))
+                if b not in self[a]: # if edge doesn't exist
                    texts = nx.get_node_attributes(self, 'text')
-                   attr = overlap(texts['neighbor_datasetid'], texts['datasetid'])
-                   self.add_edge(neighbor_datasetid, datasetid, attr)
+                   attr = overlap(texts['a'], texts['b'])
+                   self.add_edge(a, b, attr)
