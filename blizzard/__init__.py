@@ -29,6 +29,7 @@ def main():
     with ThreadPoolExecutor(n_workers) as e:
         for dataset in e.map(_snow, download.all(get)):
             if not dataset['download'].ok:
+                logger.error('%s, %s: Received bad status code, stopping' % (dataset['catalog'], dataset['datasetid']))
                 break
             g.add_dataset(dataset)
     with open('graph.p', 'wb') as fp:
