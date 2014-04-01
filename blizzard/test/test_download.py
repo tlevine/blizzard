@@ -21,5 +21,5 @@ def test_run():
     def get(url):
         return Response(text = json.dumps({'datasets':datasets}))
     observed = list(blizzard.download._run(get, 'aoeu'))
-    expected = datasets * 30
+    expected = datasets
     n.assert_list_equal(observed, expected)
