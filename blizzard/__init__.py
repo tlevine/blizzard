@@ -60,14 +60,14 @@ def nrow_overlap(index, a,b):
         with StringIO(text) as fp:
             r = csv.DictReader(fp, delimiter = ';')
             for i, row in r:
-                yield i, tuple(row[col] for col in a sorted_index)
+                yield i, tuple(row[col] for col in sorted_index)
 
     def getdata(selections):
         data = {'nrow':None,'values':set()}
         for nrow, values in selections:
             data['nrow'] = nrow
             data['values'].add(values)
-         return data
+        return data
 
     data_a = getdata(select(a))
     data_b = getdata(select(b))

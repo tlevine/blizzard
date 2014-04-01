@@ -31,6 +31,7 @@ def _get(datadir:str, url:str):
         # Stop on bad files
         if not response.ok:
             logger.error('%s: %d in new response' % (url, response.status_code))
+            logger.error('%s: %s' % (url, response.text))
             raise ValueError('Bad HTTP response')
 
         warehouse[url] = response
