@@ -17,9 +17,9 @@ def test_datasets():
     n.assert_list_equal(observed, expected)
 
 def test_run():
-    datasets = [{'datasetid':3}]
+    r = Response(text = json.dumps({'datasets':[{'datasetid':3}]}))
     def get(url):
-        return Response(text = json.dumps({'datasets':datasets}))
+        return r
     observed = list(blizzard.download._run(get, 'aoeu'))
-    expected = datasets
+    expected = [r]
     n.assert_list_equal(observed, expected)
