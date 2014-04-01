@@ -21,7 +21,7 @@ def test_run():
     def get(url):
         return r
     observed = list(blizzard.download._run(get, 'aoeu'))
-    expected = [{'datasetid':3,'download':r}]
+    expected = [{'datasetid':3,'catalog':'aoeu','download':r}]
     n.assert_list_equal(observed, expected)
 
 def test_all():
