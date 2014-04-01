@@ -42,6 +42,8 @@ def _snow(dataset):
         with StringIO(dataset['download'].text) as fp:
             try:
                 dataset['unique_indices'] = fromcsv(fp, delimiter = ';', n_columns = n_columns)
+            except ValueError:
+                raise
             except:
                 logger.error('%s, %s: Error' % (dataset['catalog'], dataset['datasetid']))
                 dataset['unique_indices'] = set()
