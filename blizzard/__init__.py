@@ -38,7 +38,7 @@ def main():
     else:
         _save(g)
 
-def _save(g)
+def _save(g):
     with open('graph.p', 'wb') as fp:
         pickle.dump(g, fp)
 
