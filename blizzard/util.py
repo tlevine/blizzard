@@ -21,7 +21,7 @@ def _get(datadir:str, url:str):
 
         # Clear bad files
         if not response.ok:
-            logger.error('%s: %d in cached response' % (url, response))
+            logger.error('%s: %d in cached response' % (url, response.status_code))
             del(warehouse[url])
             return _get(datadir, url)
     else:
@@ -30,7 +30,7 @@ def _get(datadir:str, url:str):
 
         # Stop on bad files
         if not response.ok:
-            logger.error('%s: %d in new response' % (url, response))
+            logger.error('%s: %d in new response' % (url, response.status_code))
             raise ValueError('Bad HTTP response')
 
         warehouse[url] = response
