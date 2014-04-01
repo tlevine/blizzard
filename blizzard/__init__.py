@@ -41,7 +41,7 @@ def _snow(dataset):
             try:
                 dataset['unique_indices'] = fromcsv(fp, delimiter = ';', n_columns = n_columns)
             except:
-                logger.error('%s, %s: Error' % (dataset['catalog'], dataset['id']))
+                logger.error('%s, %s: Error' % (dataset['catalog'], dataset['datasetid']))
                 dataset['unique_indices'] = set()
 
         logger.debug('%s, %s: Found indices %s' % (dataset['catalog'], dataset['datasetid'], dataset['unique_indices']))
