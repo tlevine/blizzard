@@ -27,10 +27,18 @@ def main():
     logger.debug('Starting a new run\n==============================================')
     g = Graph()
     get = functools.partial(_get, datadir)
-    with ThreadPoolExecutor(n_workers) as e:
-        for dataset in e.map(_snow, download.all(get)):
-            if dataset != None:
-                g.add_dataset(dataset)
+    try:
+        with ThreadPoolExecutor(n_workers) as e:
+            for dataset in e.map(_snow, download.all(get)):
+                if dataset != None:
+                    g.add_dataset(dataset)
+    except:
+        _save(g)
+        raise
+    else:
+        _save(g)
+
+def _save(g)
     with open('graph.p', 'wb') as fp:
         pickle.dump(g, fp)
 
