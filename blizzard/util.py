@@ -1,9 +1,17 @@
+import os
 from logging import getLogger
 
 import requests
 import pickle_warehouse
 
 logger = getLogger('blizzard')
+
+if 'http_proxy' in os.environ:
+    logger.info('Proxy: %s' % os.environ['http_proxy'])
+    proxies = {'http_proxy': os.environ['http_proxy']}
+else:
+    logger.info('Proxy: No proxy')
+    proxies = {}
 
 def _get(datadir:str, url:str):
     warehouse = pickle_warehouse.Warehouse(datadir)
@@ -12,7 +20,7 @@ def _get(datadir:str, url:str):
         response = warehouse[url]
     else:
         logger.debug('%s: Downloading' % url)
-        response = requests.get(url)
+        response = requests.get(url, proxies = proxies)
         warehouse[url] = response
     return response
 
