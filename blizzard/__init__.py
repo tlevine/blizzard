@@ -4,6 +4,8 @@ from io import StringIO
 import os
 import logging
 
+from special_snowflake import fromcsv
+
 from blizzard.util import _get, ignore
 from blizzard.graph import Graph
 import blizzard.download as download
