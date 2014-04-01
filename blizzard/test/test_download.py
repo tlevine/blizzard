@@ -1,10 +1,13 @@
+from collections import namedtuple
+
 import nose.tools as n
 
 import blizzard.download
 
 def test_datasets():
     def get(url):
-        return '{"datasets":[{"foo":8}]}'
+        Response = namedtuple('Response', ['text'])
+        return Response(text = '{"datasets":[{"foo":8}]}')
     catalog = 'stnoheustahoe'
 
     observed = blizzard.download.datasets(get, catalog)
