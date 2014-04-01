@@ -26,14 +26,14 @@ def datasets(get, catalog):
     return result
 
 def download(get, catalog, datasetid):
-    url = '%s/explore/dataset/%s/download?format=csv' % args
+    url = '%s/explore/dataset/%s/download?format=csv' % (catalog, datasetid)
     return get(url)
 
 def _run(get, catalog):
     n = 30
     datasetids = (d['datasetid'] for d in datasets(get,catalog))
     with ThreadPoolExecutor(n) as e:
-        yield from e.map(partial(get,catalog), datasetids)
+        yield from e.map(partial(download,get,catalog), datasetids)
 
 def all(get):
     with ThreadPoolExecutor(len(catalogs)) as e:

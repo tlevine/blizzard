@@ -1,11 +1,17 @@
+from logging import getLogger
+
 import requests
 import pickle_warehouse
 
-def _get(datadir:str, load:bool, url:str):
+logger = getLogger('blizzard')
+
+def _get(datadir:str, url:str):
     warehouse = pickle_warehouse.Warehouse(datadir)
     if url in warehouse:
+        logger.debug('%s: Loading from cache' % url)
         response = warehouse[url]
     else:
+        logger.debug('%s: Downloading' % url)
         response = requests.get(url)
         warehouse[url] = response
     return response
