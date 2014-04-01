@@ -28,6 +28,5 @@ def test_all():
     r = Response(text = json.dumps({'datasets':[{'datasetid':3,'catalog':'hh'}]}))
     def get(url):
         return r
-    observed = list(blizzard.download.all(get))
-    expected = [r] * len(blizzard.download.catalogs)
-    n.assert_list_equal(observed, expected)
+    observed = blizzard.download.all(get)
+    n.assert_equal(len(list(observed)), len(blizzard.download.catalogs))
