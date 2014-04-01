@@ -29,5 +29,5 @@ def test_all():
     def get(url):
         return r
     observed = list(blizzard.download.all(get))
-    expected = [r]
+    expected = [r] * len(blizzard.download.catalogs)
     n.assert_list_equal(observed, expected)

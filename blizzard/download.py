@@ -37,4 +37,5 @@ def _run(get, catalog):
 
 def all(get):
     with ThreadPoolExecutor(len(catalogs)) as e:
-        yield from e.map(partial(_run, get),catalogs)
+        for x in e.map(partial(_run, get),catalogs):
+            yield from x
