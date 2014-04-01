@@ -28,6 +28,8 @@ def main():
     get = functools.partial(_get, datadir)
     with ThreadPoolExecutor(n_workers) as e:
         for dataset in e.map(_snow, download.all(get)):
+            if not dataset['download'].ok:
+                break
             g.add_dataset(dataset)
     with open('graph.p', 'wb') as fp:
         pickle.dump(g, fp)
@@ -42,8 +44,6 @@ def _snow(dataset):
         with StringIO(dataset['download'].text) as fp:
             try:
                 dataset['unique_indices'] = fromcsv(fp, delimiter = ';', n_columns = n_columns)
-            except ValueError:
-                raise
             except:
                 logger.error('%s, %s: Error' % (dataset['catalog'], dataset['datasetid']))
                 dataset['unique_indices'] = set()
