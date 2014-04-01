@@ -18,7 +18,7 @@ def ignore(dataset):
 def main():
     g = Graph()
     for dataset in download.all(get):
-        response = download.download(get, catalog, datasetid)
+        response = download.download(get, dataset['catalog'], dataset['datasetid'])
         if not ignore(dataset):
             with StringIO(response.text) as fp:
                 dataset['unique_indices'] = unique_indices(fp, url)
