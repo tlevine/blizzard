@@ -1,4 +1,5 @@
 import functools
+import sys
 from concurrent.futures import ThreadPoolExecutor
 import pickle
 from io import StringIO
@@ -28,10 +29,8 @@ def main():
     get = functools.partial(_get, datadir)
     with ThreadPoolExecutor(n_workers) as e:
         for dataset in e.map(_snow, download.all(get)):
-            if not dataset['download'].ok:
-                logger.error('%s, %s: Received bad status code, stopping' % (dataset['catalog'], dataset['datasetid']))
-                break
-            g.add_dataset(dataset)
+            if dataset != None:
+                g.add_dataset(dataset)
     with open('graph.p', 'wb') as fp:
         pickle.dump(g, fp)
 
@@ -39,7 +38,10 @@ def _snow(dataset):
     dataset = dict(dataset)
     logger.debug('%s, %s: Got dataset' % (dataset['catalog'], dataset['datasetid']))
     if ignore(dataset):
-        logger.debug('%s, %s: Skipping' % (dataset['catalog'], dataset['datasetid']))
+        logger.debug('%s, %s: Skipping geographic data' % (dataset['catalog'], dataset['datasetid']))
+    elif not dataset['download'].ok:
+        args = (dataset['catalog'], dataset['datasetid'], dataset['download'].status_code)
+        logger.debug('%s, %s: Skipping status code %d' % args)
     else:
         logger.debug('%s, %s: Snowflaking' % (dataset['catalog'], dataset['datasetid']))
         with StringIO(dataset['download'].text) as fp:
