@@ -18,10 +18,23 @@ def _get(datadir:str, url:str):
     if url in warehouse:
         logger.debug('%s: Loading from cache' % url)
         response = warehouse[url]
+
+        # Clear bad files
+        if not response.ok:
+            logger.error('%s: %d in cached response' % (url, response))
+            del(warehouse[url])
+            return _get(datadir, url)
     else:
         logger.debug('%s: Downloading' % url)
         response = requests.get(url, proxies = proxies)
+
+        # Stop on bad files
+        if not response.ok:
+            logger.error('%s: %d in new response' % (url, response))
+            raise ValueError('Bad HTTP response')
+
         warehouse[url] = response
+
     return response
 
 def ignore(dataset):
