@@ -23,3 +23,11 @@ def test_run():
     observed = list(blizzard.download._run(get, 'aoeu'))
     expected = [r]
     n.assert_list_equal(observed, expected)
+
+def test_all():
+    r = Response(text = json.dumps({'datasets':[{'datasetid':3,'catalog':'hh'}]}))
+    def get(url):
+        return r
+    observed = list(blizzard.download.all(get))
+    expected = [r]
+    n.assert_list_equal(observed, expected)
