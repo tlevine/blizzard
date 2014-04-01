@@ -18,5 +18,8 @@ class Graph(nx.Graph):
                 a, b = tuple(sorted(_datasets))
                 if b not in self[a]: # if edge doesn't exist
                    texts = nx.get_node_attributes(self, 'text')
-                   attr = overlap(texts['a'], texts['b'])
-                   self.add_edge(a, b, attr)
+                   node_attrs, edge_attrs = overlap(texts['a'], texts['b'])
+                   
+                   self.add_edge(a, b)
+                   nx.set_node_attributes(self, 'nrow', node_attrs)
+                   nx.set_edge_attributes(self, 'nrow', edge_attrs)

@@ -53,3 +53,24 @@ def _snow(dataset):
 
         logger.debug('%s, %s: Found indices %s' % (dataset['catalog'], dataset['datasetid'], dataset['unique_indices']))
     return dataset
+
+def nrow_overlap(index, a,b):
+    sorted_index = sort(tuple(index))
+    def select(text):
+        with StringIO(text) as fp:
+            r = csv.DictReader(fp, delimiter = ';')
+            for i, row in r:
+                yield i, tuple(row[col] for col in a sorted_index)
+
+    def getdata(selections):
+        data = {'nrow':None,'values':set()}
+        for nrow, values in selections:
+            data['nrow'] = nrow
+            data['values'].add(values)
+         return data
+
+    data_a = getdata(select(a))
+    data_b = getdata(select(b))
+    node_attrs = {a: data_a['nrow'],b: data_b['nrow']},  
+    edge_attrs = {(a,b): len(data_a['values'].intersection(data_b['values']))}
+    return node_attrs, edge_attrs
