@@ -31,9 +31,11 @@ def download(get, catalog, datasetid):
 
 def _run(get, catalog):
     n = 30
-    datasetids = (d['datasetid'] for d in datasets(get,catalog))
+    def f(dataset):
+        dataset['download'] = download(get, catalog, dataset['datasetid'])
+        return dataset
     with ThreadPoolExecutor(n) as e:
-        yield from e.map(partial(download,get,catalog), datasetids)
+        yield from e.map(f, datasets(get,catalog))
 
 def all(get):
     with ThreadPoolExecutor(len(catalogs)) as e:
