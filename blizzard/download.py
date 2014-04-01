@@ -18,7 +18,7 @@ catalogs = [
 def datasets(get, catalog):
     # Search an OpenDataSoft portal, and add things.
     # I chose OpenDataSoft because they care a lot about metadata.
-    response = get(catalog + '/api/datasets/1.0/search?rows=1000000)
+    response = get(catalog + '/api/datasets/1.0/search?rows=1000000')
     result = json.loads(response.text)['datasets']
     for r in result:
         r['catalog'] = catalog
