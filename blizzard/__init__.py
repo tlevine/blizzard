@@ -12,15 +12,16 @@ from blizzard.graph import Graph
 import blizzard.download as download
 
 logger = logging.getLogger('blizzard')
-fp_log = logging.FileHandler('blizzard.log', 'a')
-logger.setLevel(logging.DEBUG)
-fp_log.setLevel(logging.DEBUG)
-logger.addHandler(fp_log)
 
 def main():
     n_columns = 3
     datadir = os.path.expanduser('~/dadawarehouse.thomaslevine.com/opendatasoft')
     n_workers = 30
+
+    fp_log = logging.FileHandler('blizzard.log', 'a')
+    logger.setLevel(logging.DEBUG)
+    fp_log.setLevel(logging.DEBUG)
+    logger.addHandler(fp_log)
 
     logger.debug('Starting a new run\n==============================================')
     g = Graph()
@@ -32,6 +33,7 @@ def main():
         pickle.dump(g, fp)
 
 def _snow(dataset):
+    dataset = dict(dataset)
     logger.debug('%s, %s: Got dataset' % (dataset['catalog'], dataset['datasetid']))
     if ignore(dataset):
         logger.debug('%s, %s: Skipping' % (dataset['catalog'], dataset['datasetid']))
