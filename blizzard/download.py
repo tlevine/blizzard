@@ -27,7 +27,10 @@ def datasets(get, catalog):
 
 def download(get, catalog, datasetid):
     url = '%s/explore/dataset/%s/download?format=csv' % (catalog, datasetid)
-    return get(url)
+    response = get(url)
+    if not response.ok:
+        logger.error('url: %d status code' % response.status_code)
+    return response
 
 def _run(get, catalog):
     n = 30
