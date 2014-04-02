@@ -13,6 +13,7 @@ from blizzard.graph import Graph
 import blizzard.download as download
 
 logger = logging.getLogger('blizzard')
+formatter = logging.Formatter()
 
 def main():
     n_columns = 3
@@ -56,7 +57,8 @@ def _snow(dataset):
             try:
                 dataset['unique_indices'] = fromcsv(fp, delimiter = ';', n_columns = n_columns)
             except:
-                logger.error('%s, %s: Error' % (dataset['catalog'], dataset['datasetid']))
+                tb = formatter.formatException(sys.exc_info())
+                logger.error('%s, %s:\n%s\n\n' % (dataset['catalog'], dataset['datasetid'], tb))
                 dataset['unique_indices'] = set()
 
         logger.debug('%s, %s: Found indices %s' % (dataset['catalog'], dataset['datasetid'], dataset['unique_indices']))
