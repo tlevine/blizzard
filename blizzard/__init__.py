@@ -16,7 +16,6 @@ logger = logging.getLogger('blizzard')
 formatter = logging.Formatter()
 
 def main():
-    n_columns = 3
     datadir = os.path.expanduser('~/dadawarehouse.thomaslevine.com/opendatasoft')
     n_workers = 30
 
@@ -44,6 +43,7 @@ def _save(g):
         pickle.dump(g, fp)
 
 def _snow(dataset):
+    n_columns = 3
     dataset = dict(dataset)
     logger.debug('%s, %s: Got dataset' % (dataset['catalog'], dataset['datasetid']))
     if ignore(dataset):
