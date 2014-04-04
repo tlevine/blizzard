@@ -34,6 +34,7 @@ def main():
         _map = e.map if threaded else map
         for dataset in _map(_snow, download.all(get)):
             if dataset != None:
+                logger.debug('%s, %s: Saving %s' % (dataset['catalog'], dataset['datasetid'], dataset))
                 g.add_dataset(dataset)
                 _save(g)
 
