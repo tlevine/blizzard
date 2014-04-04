@@ -5,11 +5,11 @@ import nose.tools as n
 
 import blizzard.download
 
-Response = namedtuple('Response', ['text'])
+Response = namedtuple('Response', ['text','ok'])
 
 def test_datasets():
     def get(url):
-        return Response(text = '{"datasets":[{"foo":8}]}')
+        return Response(text = '{"datasets":[{"foo":8}]}', ok = True)
     catalog = 'stnoheustahoe'
 
     observed = blizzard.download.datasets(get, catalog)
@@ -17,7 +17,7 @@ def test_datasets():
     n.assert_list_equal(observed, expected)
 
 def test_run():
-    r = Response(text = json.dumps({'datasets':[{'datasetid':3}]}))
+    r = Response(text = json.dumps({'datasets':[{'datasetid':3}]}), ok = True)
     def get(url):
         return r
     observed = list(blizzard.download._run(get, 'aoeu'))
@@ -25,7 +25,7 @@ def test_run():
     n.assert_list_equal(observed, expected)
 
 def test_all():
-    r = Response(text = json.dumps({'datasets':[{'datasetid':3,'catalog':'hh'}]}))
+    r = Response(text = json.dumps({'datasets':[{'datasetid':3,'catalog':'hh'}]}), ok = True)
     def get(url):
         return r
     observed = list(blizzard.download.all(get))

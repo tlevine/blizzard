@@ -39,4 +39,14 @@ def _get(datadir:str, url:str):
     return response
 
 def ignore(dataset):
-    return 'geo_shape' in set(f['type'] for f in dataset['fields'])
+    if 'geo_shape' in set(f['type'] for f in dataset['fields']):
+        # csv parser can't handle geo data
+        return True
+    elif not dataset['download'].ok:
+        # bad status code
+        return True
+    elif dataset['download'].text.strip() == '':
+        # empty file
+        return True
+    else:
+        return False
