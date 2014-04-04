@@ -27,8 +27,12 @@ def main():
     logger.debug('Starting a new run\n==============================================')
     g = Graph()
     get = functools.partial(_get, datadir)
+
+
     with ThreadPoolExecutor(n_workers) as e:
-        for dataset in e.map(_snow, download.all(get)):
+        threaded = False
+        _map = e.map if threaded else map
+        for dataset in _map(_snow, download.all(get)):
             if dataset != None:
                 g.add_dataset(dataset)
                 _save(g)
