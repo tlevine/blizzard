@@ -5,10 +5,10 @@ import networkx as nx
 class Graph(nx.Graph):
     def add_dataset(self, dataset):
         dataset_id = (dataset['catalog'], dataset['datasetid'])
+        self.add_node(dataset_id, kind = 'dataset', text = dataset['download'].text)
         for unique_index in dataset['unique_indices']:
             i = tuple(sorted(unique_index))
             self.add_node(i, kind = 'index')
-            self.add_node(dataset_id, kind = 'dataset', text = dataset['download'].text)
             self.add_edge(i, dataset_id)
 
     def refactor(self, overlap):
