@@ -48,9 +48,11 @@ def _snow(dataset):
     logger.debug('%s, %s: Got dataset' % (dataset['catalog'], dataset['datasetid']))
     if ignore(dataset):
         logger.debug('%s, %s: Skipping geographic data' % (dataset['catalog'], dataset['datasetid']))
+        dataset['unique_indices'] = set()
     elif not dataset['download'].ok:
         args = (dataset['catalog'], dataset['datasetid'], dataset['download'].status_code)
         logger.debug('%s, %s: Skipping status code %d' % args)
+        dataset['unique_indices'] = set()
     else:
         logger.debug('%s, %s: Snowflaking' % (dataset['catalog'], dataset['datasetid']))
         with StringIO(dataset['download'].text) as fp:
