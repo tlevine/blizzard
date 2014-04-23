@@ -5,6 +5,7 @@ from io import StringIO
 import os
 import csv
 from concurrent.futures import ProcessPoolExecutor
+import sys
 
 from more_itertools import ilen
 from jumble import jumble
@@ -28,7 +29,7 @@ def main():
 
     get = functools.partial(_get, datadir)
 
-    with ProcessPoolExecutor(50) as e:
+    with ProcessPoolExecutor(5) as e:
         for catalog in dl.catalogs:
             def f(dataset):
                 dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
@@ -41,7 +42,7 @@ def main():
 def snowflake(dataset):
     dataset.update(metadata(dataset['download'].text))
     del(dataset['download'])
-    print(json.dumps(dataset))
+    sys.stdout.write(json.dumps(dataset))
 
 def metadata(dataset_text):
     with StringIO(dataset_text) as fp:
