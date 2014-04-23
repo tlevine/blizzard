@@ -6,7 +6,7 @@ class Graph(nx.Graph):
     def add_dataset(self, dataset):
         dataset_id = (dataset['catalog'], dataset['datasetid'])
         self.add_node(dataset_id, kind = 'dataset')
-        for unique_index in dataset['unique_indices']:
+        for unique_index in dataset['unique_keys']:
             i = tuple(sorted(unique_index))
             self.add_node(i, kind = 'index')
             self.add_edge(i, dataset_id)
@@ -26,3 +26,16 @@ class Graph(nx.Graph):
                    self.add_edge(a, b)
                    nx.set_node_attributes(self, 'nrow', node_attrs)
                    nx.set_edge_attributes(self, 'nrow', edge_attrs)
+
+def main():
+    g = Graph()
+
+    import argparse
+    parser = argparse.ArgumentParser()
+  # parser.add_argument('JSONLINES FILE', default = 'blizzard.log')
+    parser.add_argument('-j', '--jsonlines', metavar = 'JSONLINES FILE',  default = 'blizzard.log')
+    with open(parser.parse_args().jsonlines) as fp:
+        for line in fp:
+            g.add_dataset(json.loads(line))
+
+main()
