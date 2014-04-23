@@ -2,13 +2,14 @@ import logging
 import functools
 from io import StringIO
 import os
-from more_itertools import ilen
+import csv
 
+from more_itertools import ilen
 from jumble import jumble
 from special_snowflake import fromcsv
 
 from blizzard.util import _get, ignore
-import blizzard.download as download
+from blizzard.download import download
 from blizzard.nxgraph import Graph
 
 def main():
@@ -17,15 +18,16 @@ def main():
 
     # Logging
     fp_log = logging.FileHandler('blizzard.log', 'w')
-    logger.setLevel(logging.DEBUG)
     fp_log.setLevel(logging.DEBUG)
+    logger = logging.getLogger('blizzard')
+    logger.setLevel(logging.DEBUG)
     logger.addHandler(fp_log)
     logger.debug('Starting a new run\n==============================================')
 
     get = functools.partial(_get, datadir)
 
-    dataset = download(get, catalogs[0], 'etudiants_boursiers_des_formations_sanitaires_et_sociales_sept_2007')
-    print(dataset)
+    dataset = download(get, 'http://data.iledefrance.fr', 'etudiants_boursiers_des_formations_sanitaires_et_sociales_sept_2007')
+    print(metadata(dataset.text))
 
 #   for catalog in catalogs:
 #       def f(dataset):
