@@ -1,6 +1,14 @@
 import logging
 import functools
+from io import StringIO
+import os
+from more_itertools import ilen
 
+from jumble import jumble
+from special_snowflake import fromcsv
+
+from blizzard.util import _get, ignore
+import blizzard.download as download
 from blizzard.nxgraph import Graph
 
 def main():
@@ -15,12 +23,16 @@ def main():
     logger.debug('Starting a new run\n==============================================')
 
     get = functools.partial(_get, datadir)
-    for catalog in catalogs:
-        def f(dataset):
-            dataset['download'] = download(get, catalog, dataset['datasetid'])
-            return dataset
-        for future in jumble(f, datasets(get, catalog), n_workers):
-            yield future.result()
+
+    dataset = download(get, catalogs[0], 'etudiants_boursiers_des_formations_sanitaires_et_sociales_sept_2007')
+    print(dataset)
+
+#   for catalog in catalogs:
+#       def f(dataset):
+#           dataset['download'] = download(get, catalog, dataset['datasetid'])
+#           return dataset
+#       for future in jumble(f, datasets(get, catalog), n_workers):
+#           yield future.result()
 
 def metadata(dataset_text):
     with StringIO(dataset_text) as fp:
