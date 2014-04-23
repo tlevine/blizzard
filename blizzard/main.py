@@ -9,7 +9,7 @@ from jumble import jumble
 from special_snowflake import fromcsv
 
 from blizzard.util import _get, ignore
-from blizzard.download import catalogs, download
+import blizzard.download as dl
 from blizzard.nxgraph import Graph
 
 def main():
@@ -26,14 +26,14 @@ def main():
 
     get = functools.partial(_get, datadir)
 
-#   dataset = download(get, 'http://data.iledefrance.fr', 'etudiants_boursiers_des_formations_sanitaires_et_sociales_sept_2007')
+#   dataset = dl.download(get, 'http://data.iledefrance.fr', 'etudiants_boursiers_des_formations_sanitaires_et_sociales_sept_2007')
 #   print(metadata(dataset.text))
 
-    for catalog in catalogs:
+    for catalog in dl.catalogs:
         def f(dataset):
-            dataset['download'] = download(get, catalog, dataset['datasetid'])
+            dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
             return dataset
-        for future in jumble(f, datasets(get, catalog), n_workers):
+        for future in jumble(f, dl.datasets(get, catalog), n_workers):
             print(future.result())
 
 def metadata(dataset_text):
