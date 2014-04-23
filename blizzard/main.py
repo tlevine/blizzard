@@ -42,7 +42,7 @@ def main():
 def snowflake(dataset):
     dataset.update(metadata(dataset['download'].text))
     del(dataset['download'])
-    sys.stdout.write(json.dumps(dataset))
+    sys.stdout.write(json.dumps(dataset) + '\n')
 
 def metadata(dataset_text):
     with StringIO(dataset_text) as fp:
