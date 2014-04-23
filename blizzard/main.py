@@ -8,7 +8,6 @@ from concurrent.futures import ProcessPoolExecutor
 import sys
 
 from more_itertools import ilen
-from jumble import jumble
 from special_snowflake import fromcsv
 
 from blizzard.util import _get, ignore
@@ -29,13 +28,10 @@ def main():
 
     get = functools.partial(_get, datadir)
 
-    with ProcessPoolExecutor(5) as e:
+    with ProcessPoolExecutor(4) as e:
         for catalog in dl.catalogs:
-            def f(dataset):
+            for dataset in dl.datasets(get, catalog):
                 dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
-                return dataset
-            for future in jumble(f, dl.datasets(get, catalog), n_workers):
-                dataset = future.result()
                 if not ignore(dataset):
                     e.submit(snowflake, dataset)
 
