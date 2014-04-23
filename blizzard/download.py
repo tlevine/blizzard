@@ -33,14 +33,10 @@ def download(get, catalog, datasetid):
         logger.error('url: %d status code' % response.status_code)
     return response
 
-def _run(get, catalog):
-    n = 30
-    def f(dataset):
-        dataset['download'] = download(get, catalog, dataset['datasetid'])
-        return dataset
-    for future in jumble(f, datasets(get,catalog)):
-        yield future.result()
-
 def all(get):
     for catalog in catalogs:
-        yield from _run(get, catalog)
+        def f(dataset):
+            dataset['download'] = download(get, catalog, dataset['datasetid'])
+            return dataset
+        for future in jumble(f, datasets(get, catalog)):
+            yield future.result()
