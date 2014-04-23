@@ -4,6 +4,7 @@ import functools
 from io import StringIO
 import os
 import csv
+from concurrent.futures import ProcessPoolExecutor
 
 from more_itertools import ilen
 from jumble import jumble
@@ -27,19 +28,20 @@ def main():
 
     get = functools.partial(_get, datadir)
 
-#   dataset = dl.download(get, 'http://data.iledefrance.fr', 'etudiants_boursiers_des_formations_sanitaires_et_sociales_sept_2007')
-#   print(metadata(dataset.text))
+    with ProcessPoolExecutor(50) as e:
+        for catalog in dl.catalogs:
+            def f(dataset):
+                dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
+                return dataset
+            for future in jumble(f, dl.datasets(get, catalog), n_workers):
+                dataset = future.result()
+                if not ignore(dataset):
+                    e.submit(snowflake, dataset)
 
-    for catalog in dl.catalogs:
-        def f(dataset):
-            dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
-            return dataset
-        for future in jumble(f, dl.datasets(get, catalog), n_workers):
-            dataset = future.result()
-            if not ignore(dataset):
-                dataset.update(metadata(dataset['download'].text))
-                del(dataset['download'])
-                print(json.dumps(dataset))
+def snowflake(dataset):
+    dataset.update(metadata(dataset['download'].text))
+    del(dataset['download'])
+    print(json.dumps(dataset))
 
 def metadata(dataset_text):
     with StringIO(dataset_text) as fp:
