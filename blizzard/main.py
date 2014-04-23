@@ -47,4 +47,4 @@ def metadata(dataset_text):
         nrow = ilen(r)
     with StringIO(dataset_text) as fp:
         unique_keys = fromcsv(fp)
-    return {'nrow': nrow}
+    return {'nrow': nrow, 'unique_keys': unique_keys}
