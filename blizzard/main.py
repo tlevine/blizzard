@@ -1,3 +1,4 @@
+import json
 import logging
 import functools
 from io import StringIO
@@ -33,11 +34,12 @@ def main():
         def f(dataset):
             dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
             return dataset
-        for future in jumble(f, datasets(get, catalog), n_workers):
+        for future in jumble(f, dl.datasets(get, catalog), n_workers):
             dataset = future.result()
-            dataset.update(metadata(dataset['download'].text))
-            del(dataset['download'])
-            print(json.dumps(dataset))
+            if not ignore(dataset):
+                dataset.update(metadata(dataset['download'].text))
+                del(dataset['download'])
+                print(json.dumps(dataset))
 
 def metadata(dataset_text):
     with StringIO(dataset_text) as fp:
