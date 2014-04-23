@@ -34,7 +34,10 @@ def main():
             dataset['download'] = download(get, catalog, dataset['datasetid'])
             return dataset
         for future in jumble(f, datasets(get, catalog), n_workers):
-            print(future.result())
+            dataset = future.result()
+            dataset.update(metadata(dataset['download'].text))
+            del(dataset['download'])
+            print(json.dumps(dataset))
 
 def metadata(dataset_text):
     with StringIO(dataset_text) as fp:
