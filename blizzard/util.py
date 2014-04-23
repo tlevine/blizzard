@@ -41,7 +41,7 @@ def _get(datadir:str, url:str):
 def ignore(dataset):
     if 'geo_shape' in set(f['type'] for f in dataset['fields']):
         args = (dataset['catalog'], dataset['datasetid'])
-        logger.debug('%s, %s: csv parser can't handle geo data')
+        logger.debug('%s, %s: csv parser can\'t handle geo data')
         return True
     elif not dataset['download'].ok:
         args = (dataset['catalog'], dataset['datasetid'], dataset['download'].status_code)
