@@ -43,4 +43,6 @@ def metadata(dataset_text):
     with StringIO(dataset_text) as fp:
         r = csv.DictReader(fp, delimiter = ';')
         nrow = ilen(r)
+    with StringIO(dataset_text) as fp:
+        unique_keys = fromcsv(fp)
     return {'nrow': nrow}
