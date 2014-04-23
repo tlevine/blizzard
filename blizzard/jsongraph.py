@@ -6,10 +6,9 @@ def write_triple(fp, subject, predicate, object):
     row = (subject, predicate, object)
     fp.write(json.dumps(row) + '\n')
 
-def add_dataset(metadata, get_text, fp, dataset):
+def add_dataset(metadata, fp, dataset):
     '''
     overlap  :: dataset text -> dict
-    get_text :: dataset id -> dataset text
     fp       :: file-like object
     dataset  :: dict
     '''
@@ -19,5 +18,5 @@ def add_dataset(metadata, get_text, fp, dataset):
     for unique_index in dataset['unique_indices']:
         i = tuple(sorted(unique_index))
         save('unique index', i)
-    for k, v in metadata(get_text(dataset['datasetid']))
+    for k, v in metadata(dataset['download'].text):
         save(k, v)

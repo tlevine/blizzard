@@ -4,13 +4,14 @@ import pickle
 from io import StringIO
 import os
 import logging
+from more_itertools import ilen
 
 from jumble import jumble
 from special_snowflake import fromcsv
 
 from blizzard.util import _get, ignore
-from blizzard.nxgraph import Graph
 import blizzard.download as download
+from blizzard.jsongraph import add_dataset as _add_dataset
 
 logger = logging.getLogger('blizzard')
 formatter = logging.Formatter()
@@ -27,20 +28,18 @@ def main():
     logger.addHandler(fp_log)
 
     logger.debug('Starting a new run\n==============================================')
-    g = Graph()
     get = functools.partial(_get, datadir)
 
+    fp = open('blizzard.jsonlines', 'w')
+    add_dataset = functools.partial(_add_dataset, fp)
 
     for future in jumble(_snow, download.all(get)):
         dataset = future.result()
         if dataset != None:
             logger.debug('%s, %s: Saving %s' % (dataset['catalog'], dataset['datasetid'], dataset))
-            g.add_dataset(dataset)
-            _save(g)
+            add_dataset(dataset)
 
-def _save(g):
-    with open('graph.p', 'wb') as fp:
-        pickle.dump(g, fp)
+    fp.close()
 
 def _snow(dataset):
     n_columns = 3
@@ -86,3 +85,9 @@ def nrow_overlap(index, a,b):
     node_attrs = {a: data_a['nrow'],b: data_b['nrow']},  
     edge_attrs = {(a,b): len(data_a['values'].intersection(data_b['values']))}
     return node_attrs, edge_attrs
+
+def metadata(dataset_text):
+    with StringIO(dataset_text) as fp:
+        r = csv.DictReader(fp, delimiter = ';')
+        nrow = ilen(r)
+    return {'nrow': nrow}
