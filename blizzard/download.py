@@ -32,11 +32,3 @@ def download(get, catalog, datasetid):
     if not response.ok:
         logger.error('url: %d status code' % response.status_code)
     return response
-
-def all(get):
-    for catalog in catalogs:
-        def f(dataset):
-            dataset['download'] = download(get, catalog, dataset['datasetid'])
-            return dataset
-        for future in jumble(f, datasets(get, catalog)):
-            yield future.result()
