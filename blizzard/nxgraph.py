@@ -1,4 +1,5 @@
 from itertools import combinations
+import json, pickle
 
 import networkx as nx
 
@@ -39,6 +40,6 @@ def main():
         for line in fp:
             g.add_dataset(json.loads(line))
     with open('blizzard.p', 'wb') as fp:
-        fp.write(g)
+        pickle.dump(g, fp)
 
 main()
