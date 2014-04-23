@@ -9,11 +9,13 @@ import logging
 from special_snowflake import fromcsv
 
 from blizzard.util import _get, ignore
-from blizzard.graph import Graph
+from blizzard.nxgraph import Graph
 import blizzard.download as download
 
 logger = logging.getLogger('blizzard')
 formatter = logging.Formatter()
+
+__version__ = '0.0.1'
 
 def main():
     datadir = os.path.expanduser('~/dadawarehouse.thomaslevine.com/opendatasoft')
