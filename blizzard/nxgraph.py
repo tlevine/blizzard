@@ -33,7 +33,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser()
   # parser.add_argument('JSONLINES FILE', default = 'blizzard.log')
-    parser.add_argument('-j', '--jsonlines', metavar = 'JSONLINES FILE',  default = 'blizzard.log')
+    parser.add_argument('-j', '--jsonlines', metavar = 'JSONLINES FILE',  default = 'blizzard.jsonlines')
     parser.add_argument('-g', '--graph', metavar = 'GRAPH FILE',  default = 'blizzard.p')
     with open(parser.parse_args().jsonlines) as fp:
         for line in fp:
