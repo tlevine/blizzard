@@ -1,4 +1,5 @@
-from concurrent.futures import ThreadPoolExecutor
+from jumble import jumble
+
 from functools import partial
 import json
 
@@ -37,10 +38,9 @@ def _run(get, catalog):
     def f(dataset):
         dataset['download'] = download(get, catalog, dataset['datasetid'])
         return dataset
-    with ThreadPoolExecutor(n) as e:
-        yield from e.map(f, datasets(get,catalog))
+    for future in jumble(f, datasets(get,catalog)):
+        yield future.result()
 
 def all(get):
-    with ThreadPoolExecutor(len(catalogs)) as e:
-        for x in e.map(partial(_run, get),catalogs):
-            yield from x
+    for catalog in catalogs:
+        yield from _run(get, catalog)

@@ -1,11 +1,11 @@
 import functools
 import sys
-from concurrent.futures import ThreadPoolExecutor
 import pickle
 from io import StringIO
 import os
 import logging
 
+from jumble import jumble
 from special_snowflake import fromcsv
 
 from blizzard.util import _get, ignore
@@ -31,14 +31,12 @@ def main():
     get = functools.partial(_get, datadir)
 
 
-    with ThreadPoolExecutor(n_workers) as e:
-        threaded = False
-        _map = e.map if threaded else map
-        for dataset in _map(_snow, download.all(get)):
-            if dataset != None:
-                logger.debug('%s, %s: Saving %s' % (dataset['catalog'], dataset['datasetid'], dataset))
-                g.add_dataset(dataset)
-                _save(g)
+    for future in jumble(_snow, download.all(get)):
+        dataset = future.result()
+        if dataset != None:
+            logger.debug('%s, %s: Saving %s' % (dataset['catalog'], dataset['datasetid'], dataset))
+            g.add_dataset(dataset)
+            _save(g)
 
 def _save(g):
     with open('graph.p', 'wb') as fp:
