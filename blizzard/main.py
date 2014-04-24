@@ -27,7 +27,7 @@ def main():
     logger.debug('Starting a new run\n==============================================')
 
     get = functools.partial(_get, datadir)
-    command = p.parse_args().command
+    command = parser().parse_args().command
     if command == 'index':
         index(get, sys.stdout)
     elif command == 'graph':
