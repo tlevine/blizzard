@@ -1,18 +1,18 @@
-import json
 import logging
 import functools
-from io import StringIO
 import os
-import csv
-from concurrent.futures import ProcessPoolExecutor
 import sys
-
-from more_itertools import ilen
-from special_snowflake import fromcsv
+from concurrent.futures import ProcessPoolExecutor
+import argparse
 
 from blizzard.util import _get, ignore
 import blizzard.download as dl
-from blizzard.nxgraph import Graph
+from blizzard.nxgraph import Graph, dataset_url
+
+def parser():
+    p = argparse.ArgumentParser()
+    p.add_argument('command', choices = ['index', 'graph'])
+    return p
 
 def main():
     datadir = os.path.expanduser('~/dadawarehouse.thomaslevine.com/big/opendatasoft')
@@ -27,23 +27,26 @@ def main():
     logger.debug('Starting a new run\n==============================================')
 
     get = functools.partial(_get, datadir)
+    command = p.parse_args().command
+    if command == 'index':
+        index(get, sys.stdout)
+    elif command == 'graph':
+        h
 
+def index(get, fp_out):
     with ProcessPoolExecutor(4) as e:
         for catalog in dl.catalogs:
             for dataset in dl.datasets(get, catalog):
                 dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
                 if not ignore(dataset):
-                    e.submit(snowflake, dataset)
+                    e.submit(functools.partial(snowflake, fp_out), dataset)
 
-def snowflake(dataset):
-    dataset.update(metadata(dataset['download'].text))
-    del(dataset['download'])
-    sys.stdout.write(json.dumps(dataset) + '\n')
+def graph(get, fp_in, fp_out):
+    g = Graph()
+    for line in fp:
+        g.add_dataset(json.loads(line))
+    for left, right in g.similarly_indexed_datasets():
+        fp.write((left, right))
 
-def metadata(dataset_text):
-    with StringIO(dataset_text) as fp:
-        r = csv.DictReader(fp, delimiter = ';')
-        nrow = ilen(r)
-    with StringIO(dataset_text) as fp:
-        unique_keys = list(sorted(fromcsv(fp, delimiter = ';')))
-    return {'nrow': nrow, 'unique_keys': unique_keys}
+#   with open('blizzard.p', 'wb') as fp:
+#       pickle.dump(g, fp)

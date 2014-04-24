@@ -28,19 +28,3 @@ def dataset_url(node):
     name, data = node
     if data['kind'] == 'dataset':
         return '%s/explore/dataset/%s' % name
-
-def main():
-    g = Graph()
-
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-j', '--jsonlines', metavar = 'JSONLINES FILE',  default = 'blizzard.jsonlines')
-    parser.add_argument('-g', '--graph', metavar = 'GRAPH FILE',  default = 'blizzard.p')
-    with open(parser.parse_args().jsonlines) as fp:
-        for line in fp:
-            g.add_dataset(json.loads(line))
-    for left, right in g.similarly_indexed_datasets():
-        print(left, right)
-
-#   with open('blizzard.p', 'wb') as fp:
-#       pickle.dump(g, fp)
