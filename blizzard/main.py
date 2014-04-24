@@ -6,6 +6,7 @@ import sys
 from concurrent.futures import ProcessPoolExecutor
 
 import blizzard.util as u
+import blizzard.meta as meta
 import blizzard.download as dl
 from blizzard.nxgraph import Graph
 
@@ -29,12 +30,20 @@ def main():
         graph(get, sys.stdin, sys.stdout)
 
 def index(get, fp_out):
+    futures = {}
     with ProcessPoolExecutor(4) as e:
         for catalog in dl.catalogs:
             for dataset in dl.datasets(get, catalog):
                 dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
-                if not ignore(dataset):
-                    e.submit(functools.partial(snowflake, fp_out), dataset)
+                if not u.ignore(dataset):
+                    futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
+
+    while futures != {}:
+        for key, future in list(futures.items()):
+            if future.done():
+                dataset = future.result()
+                fp_out.write(json.dumps(dataset) + '\n')
+                del(futures[key])
 
 def graph(get, fp_in, fp_out):
     g = Graph()

@@ -4,10 +4,10 @@ from io import StringIO
 from more_itertools import ilen
 from special_snowflake import fromcsv
 
-def snowflake(fp, dataset):
+def snowflake(dataset):
     dataset.update(individual_metadata(dataset['download'].text))
     del(dataset['download'])
-    fp(json.dumps(dataset) + '\n')
+    return dataset
 
 def individual_metadata(dataset_text):
     with StringIO(dataset_text) as fp:
