@@ -5,6 +5,7 @@ import networkx as nx
 class Graph(nx.Graph):
     def add_dataset(self, dataset):
         dataset_id = (dataset['catalog'], dataset['datasetid'])
+       #dataset_url = '%s/explore/dataset/%s' % (dataset['catalog'], dataset['datasetid'])
         self.add_node(dataset_id, kind = 'dataset')
         for unique_index in dataset['unique_keys']:
             i = tuple(sorted(unique_index))
@@ -32,7 +33,6 @@ def main():
 
     import argparse
     parser = argparse.ArgumentParser()
-  # parser.add_argument('JSONLINES FILE', default = 'blizzard.log')
     parser.add_argument('-j', '--jsonlines', metavar = 'JSONLINES FILE',  default = 'blizzard.jsonlines')
     parser.add_argument('-g', '--graph', metavar = 'GRAPH FILE',  default = 'blizzard.p')
     with open(parser.parse_args().jsonlines) as fp:
@@ -40,5 +40,3 @@ def main():
             g.add_dataset(json.loads(line))
     with open('blizzard.p', 'wb') as fp:
         fp.write(g)
-
-main()
