@@ -29,6 +29,11 @@ class Graph(nx.Graph):
                    nx.set_node_attributes(self, 'nrow', node_attrs)
                    nx.set_edge_attributes(self, 'nrow', edge_attrs)
 
+def dataset_url(node):
+    name, data = node
+    if data.get('kind') == 'dataset':
+        return '%s/explore/dataset/%s' % name
+
 def main():
     g = Graph()
 
