@@ -36,16 +36,17 @@ def index(get, fp_out):
             for dataset in dl.datasets(get, catalog):
                 dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
                 if not u.ignore(dataset):
-                    futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
+                  # futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
+                    print(dataset['datasetid'])
 
-    from time import sleep
-    while futures != {}:
-        for key, future in list(futures.items()):
-            if future.done():
-                dataset = future.result()
-                fp_out.write(json.dumps(dataset) + '\n')
-                del(futures[key])
-        sleep(0)
+#   from time import sleep
+#   while futures != {}:
+#       for key, future in list(futures.items()):
+#           if future.done():
+#               dataset = future.result()
+#               fp_out.write(json.dumps(dataset) + '\n')
+#               del(futures[key])
+#       sleep(0)
 
 def graph(get, fp_in, fp_out):
     g = Graph()
