@@ -1,42 +1,24 @@
 import os
+import argparse
 from logging import getLogger
 
 import requests
 import pickle_warehouse
+from picklecache import downloader as _downloader
 
 logger = getLogger('blizzard')
 
-def _get(datadir:str, url:str):
-    warehouse = pickle_warehouse.Warehouse(datadir)
-    if url in warehouse:
-        logger.debug('%s: Loading from cache' % url)
-        response = warehouse[url]
-
-        # Clear bad files
-        if not response.ok:
-            logger.error('%s: %d in cached response' % (url, response.status_code))
-            del(warehouse[url])
-            return _get(datadir, url)
+def _get(url:str):
+    if 'http_proxy' in os.environ:
+        logger.info('Proxy: %s' % os.environ['http_proxy'])
+        proxies = {'http_proxy': os.environ['http_proxy']}
     else:
-        if 'http_proxy' in os.environ:
-            logger.info('Proxy: %s' % os.environ['http_proxy'])
-            proxies = {'http_proxy': os.environ['http_proxy']}
-        else:
-            logger.info('Proxy: No proxy')
-            proxies = {}
+        logger.info('Proxy: No proxy')
+        proxies = {}
+    logger.debug('%s: Downloading with proxies %s' % (url,proxies))
+    return requests.get(url, proxies = proxies)
 
-        logger.debug('%s: Downloading with proxies %s' % (url,proxies))
-        response = requests.get(url, proxies = proxies)
-
-        # Stop on bad files
-        if not response.ok:
-            logger.error('%s: %d in new response' % (url, response.status_code))
-            logger.error('%s: %s' % (url, response.text))
-            raise ValueError('Bad HTTP response')
-
-        warehouse[url] = response
-
-    return response
+downloader = lambda datadir: _downloader(_get, Warehouse(datadir))
 
 def ignore(dataset):
     if 'geo_shape' in set(f['type'] for f in dataset['fields']):
@@ -53,3 +35,14 @@ def ignore(dataset):
         return True
     else:
         return False
+
+def parser():
+    p = argparse.ArgumentParser()
+    p.add_argument('command', choices = ['index', 'graph'])
+    return p
+
+def dataset_url(catalog, datasetid):
+    return '%s/explore/dataset/%s' % (catalog, datasetid)
+
+def dataset_download_url(catalog, datasetid):
+    return '%s/explore/dataset/%s/download/?format=csv' % (catalog, datasetid)

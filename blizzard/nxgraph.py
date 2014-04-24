@@ -23,6 +23,3 @@ class Graph(nx.Graph):
                 if not ((a, b) in seen or (b, a) in seen):
                     yield a, b
                     seen.add((a, b))
-
-def dataset_url(catalog, datasetid):
-    return '%s/explore/dataset/%s' % (catalog, datasetid)

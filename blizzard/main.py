@@ -4,16 +4,10 @@ import json
 import os
 import sys
 from concurrent.futures import ProcessPoolExecutor
-import argparse
 
-from blizzard.util import _get, ignore
+import blizzard.util as u
 import blizzard.download as dl
-from blizzard.nxgraph import Graph, dataset_url
-
-def parser():
-    p = argparse.ArgumentParser()
-    p.add_argument('command', choices = ['index', 'graph'])
-    return p
+from blizzard.nxgraph import Graph
 
 def main():
     datadir = os.path.expanduser('~/dadawarehouse.thomaslevine.com/big/opendatasoft')
@@ -27,8 +21,8 @@ def main():
     logger.addHandler(fp_log)
     logger.debug('Starting a new run\n==============================================')
 
-    get = functools.partial(_get, datadir)
-    command = parser().parse_args().command
+    get = u.downloader(datadir)
+    command = u.parser().parse_args().command
     if command == 'index':
         index(get, sys.stdout)
     elif command == 'graph':
@@ -48,7 +42,7 @@ def graph(get, fp_in, fp_out):
         g.add_dataset(json.loads(line))
     for left, right in g.similarly_indexed_datasets():
       # fp_out.write(str((left, right)) + '\n')
-        fp_out.write(dataset_url(*left) + '  <-->  ' + dataset_url(*right) + '\n')
+        fp_out.write(u.dataset_url(*left) + '  <-->  ' + u.dataset_url(*right) + '\n')
 
 #   with open('blizzard.p', 'wb') as fp:
 #       pickle.dump(g, fp)
