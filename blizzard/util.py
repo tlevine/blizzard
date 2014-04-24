@@ -3,7 +3,7 @@ import argparse
 from logging import getLogger
 
 import requests
-import pickle_warehouse
+from pickle_warehouse import Warehouse
 from picklecache import downloader as _downloader
 
 logger = getLogger('blizzard')
