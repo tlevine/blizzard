@@ -16,3 +16,15 @@ def individual_metadata(dataset_text):
     with StringIO(dataset_text) as fp:
         unique_keys = list(sorted(fromcsv(fp, delimiter = ';')))
     return {'nrow': nrow, 'unique_keys': unique_keys}
+
+def pairwise_metadata(unique_key, left_text, right_text):
+    left_hashes = _index_hashes(unique_key, left_text)
+    right_hashes = _index_hashes(unique_key, right_text)
+    return len(left_hashes.intersection(right_hashes))
+
+def _index_hashes(unique_key, dataset_text):
+    hashes = set()
+    with StringIO(dataset_text) as fp:
+        r = csv.DictReader(fp, delimiter = ';')
+        for row in r:
+            hashes.add(tuple(row[column_name] for column_name in sorted(unique_key)))
