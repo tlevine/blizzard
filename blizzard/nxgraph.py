@@ -13,25 +13,20 @@ class Graph(nx.Graph):
             self.add_node(i, kind = 'index')
             self.add_edge(i, dataset_id)
 
-    def refactor(self, overlap, get_text):
-        '''
-        overlap :: (dataset text, dataset text) -> (node_attrs, edge_attrs)
-        get_text :: dataset id -> dataset text
-        '''
+    def similarly_indexed_datasets(self):
+        'Returns an iterable of (dataset node, dataset node)'
         indices = (index for index,data in self.nodes(data = True) if data['kind'] == 'index')
+        seen = set()
         for index in indices:
             for datasets in combinations(self.neighbors(index),2):
                 a, b = tuple(sorted(_datasets))
-                if b not in self[a]: # if edge doesn't exist
-                   node_attrs, edge_attrs = overlap(get_text(a), get_text(b))
-                   
-                   self.add_edge(a, b)
-                   nx.set_node_attributes(self, 'nrow', node_attrs)
-                   nx.set_edge_attributes(self, 'nrow', edge_attrs)
+                if not ((a, b) in seen or (b, a) in seen):
+                    yield a, b
+                    seen.add((a, b))
 
 def dataset_url(node):
     name, data = node
-    if data.get('kind') == 'dataset':
+    if data['kind'] == 'dataset':
         return '%s/explore/dataset/%s' % name
 
 def main():
