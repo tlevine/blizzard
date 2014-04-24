@@ -24,7 +24,5 @@ class Graph(nx.Graph):
                     yield a, b
                     seen.add((a, b))
 
-def dataset_url(node):
-    name, data = node
-    if data['kind'] == 'dataset':
-        return '%s/explore/dataset/%s' % name
+def dataset_url(catalog, datasetid):
+    return '%s/explore/dataset/%s' % (catalog, datasetid)

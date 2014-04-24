@@ -1,5 +1,6 @@
 import logging
 import functools
+import json
 import os
 import sys
 from concurrent.futures import ProcessPoolExecutor
@@ -31,7 +32,7 @@ def main():
     if command == 'index':
         index(get, sys.stdout)
     elif command == 'graph':
-        h
+        graph(get, sys.stdin, sys.stdout)
 
 def index(get, fp_out):
     with ProcessPoolExecutor(4) as e:
@@ -43,10 +44,11 @@ def index(get, fp_out):
 
 def graph(get, fp_in, fp_out):
     g = Graph()
-    for line in fp:
+    for line in fp_in:
         g.add_dataset(json.loads(line))
     for left, right in g.similarly_indexed_datasets():
-        fp.write((left, right))
+      # fp_out.write(str((left, right)) + '\n')
+        fp_out.write(dataset_url(*left) + '  <-->  ' + dataset_url(*right) + '\n')
 
 #   with open('blizzard.p', 'wb') as fp:
 #       pickle.dump(g, fp)
