@@ -39,5 +39,8 @@ def main():
     with open(parser.parse_args().jsonlines) as fp:
         for line in fp:
             g.add_dataset(json.loads(line))
-    with open('blizzard.p', 'wb') as fp:
-        pickle.dump(g, fp)
+    for left, right in g.similarly_indexed_datasets():
+        print(left, right)
+
+#   with open('blizzard.p', 'wb') as fp:
+#       pickle.dump(g, fp)
