@@ -19,7 +19,7 @@ class Graph(nx.Graph):
         seen = set()
         for index in indices:
             for datasets in combinations(self.neighbors(index),2):
-                a, b = tuple(sorted(_datasets))
+                a, b = tuple(sorted(datasets))
                 if not ((a, b) in seen or (b, a) in seen):
                     yield a, b
                     seen.add((a, b))
