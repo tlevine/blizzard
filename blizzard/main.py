@@ -39,23 +39,18 @@ def index(get, fp_out):
                 dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
                 if not u.ignore(dataset):
                     futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
+                break
 
-#   from time import sleep
-#   while futures != {}:
-#       for key, future in list(futures.items()):
-#           if future.done():
-#               dataset = future.result()
-#               fp_out.write(json.dumps(dataset) + '\n')
-#               del(futures[key])
-#       sleep(0)
+        while futures != {}:
+            for key, future in list(futures.items()):
+                if future.done():
+                    dataset = future.result()
+                    fp_out.write(json.dumps(dataset) + '\n')
+                    del(futures[key])
 
 def graph(get, fp_in, fp_out):
     g = Graph()
     for line in fp_in:
         g.add_dataset(json.loads(line))
     for left, right in g.similarly_indexed_datasets():
-      # fp_out.write(str((left, right)) + '\n')
         fp_out.write(u.dataset_url(*left) + '  <-->  ' + u.dataset_url(*right) + '\n')
-
-#   with open('blizzard.p', 'wb') as fp:
-#       pickle.dump(g, fp)
