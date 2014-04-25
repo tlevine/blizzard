@@ -10,6 +10,8 @@ import blizzard.meta as meta
 import blizzard.download as dl
 from blizzard.nxgraph import Graph
 
+logger = logging.getLogger('blizzard')
+
 def main():
     datadir = os.path.expanduser('~/dadawarehouse.thomaslevine.com/big/opendatasoft')
     n_workers = 30
@@ -17,7 +19,6 @@ def main():
     # Logging
     fp_log = logging.FileHandler('blizzard.log', 'w')
     fp_log.setLevel(logging.DEBUG)
-    logger = logging.getLogger('blizzard')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(fp_log)
     logger.debug('Starting a new run\n==============================================')
@@ -34,11 +35,10 @@ def index(get, fp_out):
     with ProcessPoolExecutor(4) as e:
         for catalog in dl.catalogs:
             for dataset in dl.datasets(get, catalog):
-                print(u.dataset_download_url(dataset['catalog'], dataset['datasetid']))
+                logger.debug(u.dataset_download_url(dataset['catalog'], dataset['datasetid']))
                 dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
-   #            if not u.ignore(dataset):
-   #              # futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
-   #                print(u.dataset_download_url(dataset['catalog'], dataset['datasetid']))
+                if not u.ignore(dataset):
+                    futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
 
 #   from time import sleep
 #   while futures != {}:

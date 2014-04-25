@@ -16,7 +16,10 @@ def _get(url:str):
         logger.info('Proxy: No proxy')
         proxies = {}
     logger.debug('%s: Downloading with proxies %s' % (url,proxies))
-    return requests.get(url, proxies = proxies)
+    try:
+        return requests.get(url, proxies = proxies)
+    except:
+        raise ConnectionError(url)
 
 downloader = lambda datadir: _downloader(_get, Warehouse(datadir))
 
