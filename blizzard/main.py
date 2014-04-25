@@ -44,10 +44,9 @@ def index(get, fp_out):
             for key, future in list(futures.items()):
                 if future.done():
                     dataset = future.result()
-#                   fp_out.write(json.dumps(dataset) + '\n')
+                    fp_out.write(json.dumps(dataset) + '\n')
                     del(futures[key])
                     logger.debug('Remaining datasets:\n%s' % futures.keys())
-                    print(futures.keys())
 
 def graph(get, fp_in, fp_out):
     g = Graph()
