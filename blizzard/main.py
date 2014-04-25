@@ -34,10 +34,11 @@ def index(get, fp_out):
     with ProcessPoolExecutor(4) as e:
         for catalog in dl.catalogs:
             for dataset in dl.datasets(get, catalog):
+                print(u.dataset_download_url(dataset['catalog'], dataset['datasetid']))
                 dataset['download'] = dl.download(get, catalog, dataset['datasetid'])
-                if not u.ignore(dataset):
-                  # futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
-                    print(dataset['datasetid'])
+   #            if not u.ignore(dataset):
+   #              # futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
+   #                print(u.dataset_download_url(dataset['catalog'], dataset['datasetid']))
 
 #   from time import sleep
 #   while futures != {}:
