@@ -5,17 +5,15 @@ from logging import getLogger
 logger = getLogger('blizzard')
 
 def ignore(dataset):
+    url = dataset_url(dataset['catalog'], dataset['datasetid'])
     if 'geo_shape' in set(f['type'] for f in dataset['fields']):
-        args = (dataset['catalog'], dataset['datasetid'])
-        logger.debug('%s, %s: csv parser can\'t handle geo data')
+        logger.debug('csv parser can\'t handle geo data at %s' % url)
         return True
     elif not dataset['download'].ok:
-        args = (dataset['catalog'], dataset['datasetid'], dataset['download'].status_code)
-        logger.debug('%s, %s: Skipping status code %d' % args)
+        logger.debug('Skipping status code %d at %s' % (dataset['download'].status_code, url)
         return True
     elif dataset['download'].text.strip() == '':
-        args = (dataset['catalog'], dataset['datasetid'])
-        logger.debug('%s, %s: empty file')
+        logger.debug('Empty file at %s' % url)
         return True
     else:
         return False

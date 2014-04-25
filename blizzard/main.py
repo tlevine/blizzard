@@ -48,7 +48,7 @@ def index(fp_out):
                     dataset = future.result()
                     fp_out.write(json.dumps(dataset) + '\n')
                     del(state['futures'][key])
-                    logger.debug('Remaining datasets:\n%s' % state['futures'].keys())
+                    logger.debug('In line for snowflaking: %s' % state['futures'].keys())
 
 def graph(fp_in, fp_out):
     g = Graph()
