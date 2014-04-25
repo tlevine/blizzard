@@ -2,26 +2,7 @@ import os
 import argparse
 from logging import getLogger
 
-import requests
-from pickle_warehouse import Warehouse
-from picklecache import downloader as _downloader
-
 logger = getLogger('blizzard')
-
-def _get(url:str):
-    if 'http_proxy' in os.environ:
-        logger.info('Proxy: %s' % os.environ['http_proxy'])
-        proxies = {'http_proxy': os.environ['http_proxy']}
-    else:
-        logger.info('Proxy: No proxy')
-        proxies = {}
-    logger.debug('%s: Downloading with proxies %s' % (url,proxies))
-    try:
-        return requests.get(url, proxies = proxies)
-    except:
-        raise ConnectionError(url)
-
-downloader = lambda datadir: _downloader(_get, Warehouse(datadir))
 
 def ignore(dataset):
     if 'geo_shape' in set(f['type'] for f in dataset['fields']):
