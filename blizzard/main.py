@@ -4,6 +4,7 @@ import json
 import os
 import sys
 from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures.process import BrokenProcessPool
 from threading import Thread
 
 from pluplusch import pluplusch
@@ -41,14 +42,18 @@ def index(fp_out):
                     state['futures'][(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
             state['downloading'] = False
             
-        Thread(None, target = divine, name = 'download datasets', args = ()).start()
-        while state['downloading'] or state['futures'] != {}:
-            for key, future in list(state['futures'].items()):
-                if future.done():
-                    dataset = future.result()
-                    fp_out.write(json.dumps(dataset) + '\n')
-                    del(state['futures'][key])
-                    logger.debug('In line for snowflaking: %s' % state['futures'].keys())
+        try:
+            Thread(None, target = divine, name = 'download datasets', args = ()).start()
+            while state['downloading'] or state['futures'] != {}:
+                for key, future in list(state['futures'].items()):
+                    if future.done():
+                        dataset = future.result()
+                        fp_out.write(json.dumps(dataset) + '\n')
+                        del(state['futures'][key])
+                        logger.debug('In line for snowflaking: %s' % state['futures'].keys())
+        except BrokenProcessPool:
+            logger.error('Error at this state: %s' % state)
+            raise
 
 def graph(fp_in, fp_out):
     g = Graph()
