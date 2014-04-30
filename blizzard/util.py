@@ -10,7 +10,7 @@ def ignore(dataset):
         logger.debug('csv parser can\'t handle geo data at %s' % url)
         return True
     elif not dataset['download'].ok:
-        logger.debug('Skipping status code %d at %s' % (dataset['download'].status_code, url)
+        logger.debug('Skipping status code %d at %s' % (dataset['download'].status_code, url))
         return True
     elif dataset['download'].text.strip() == '':
         logger.debug('Empty file at %s' % url)
