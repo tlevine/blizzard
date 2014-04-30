@@ -62,6 +62,13 @@ def graph(fp_in, fp_out):
     for left, right in g.similarly_indexed_datasets():
         fp_out.write(u.dataset_url(*left) + '  <-->  ' + u.dataset_url(*right) + '\n')
 
+'''
+Fix this with downloader and pickle_warehouse
+
+def from_cache(catalog, datasetid)
+    dataset_download_url(catalog, datasetid) 
+'''
+
 def proxies():
     if 'http_proxy' in os.environ:
         logger.info('Proxy: %s' % os.environ['http_proxy'])
