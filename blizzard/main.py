@@ -5,6 +5,7 @@ import os
 import sys
 from concurrent.futures import ProcessPoolExecutor
 
+from picklecache import cache
 from pickle_warehouse import Warehouse
 from pluplusch import pluplusch
 
@@ -63,13 +64,9 @@ def graph(fp_in, fp_out):
     for left, right in g.similarly_indexed_datasets():
         fp_out.write(u.dataset_url(*left) + '  <-->  ' + u.dataset_url(*right) + '\n')
 
-'''
-Fix this with downloader and pickle_warehouse
-
 def from_cache(catalog, datasetid)
     warehouse = Warehouse('.blizzard')
     dataset_download_url(catalog, datasetid) 
-'''
 
 def proxies():
     if 'http_proxy' in os.environ:
