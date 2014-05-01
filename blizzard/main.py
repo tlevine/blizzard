@@ -34,26 +34,25 @@ def main():
         graph(sys.stdin, sys.stdout)
 
 def index(fp_out):
-    state = {'downloading': True, 'futures': {}}
+    datasets = pluplusch(catalogs = dl.catalogs, cache_dir = '.blizzard', proxies = proxies())
+    futures = {}
     with ProcessPoolExecutor(4) as e:
-        def divine():
-            for dataset in pluplusch(catalogs = dl.catalogs, cache_dir = '.blizzard', proxies = proxies()):
-                if not u.ignore(dataset):
-                    state['futures'][(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
-            state['downloading'] = False
-            
-        try:
-            Thread(None, target = divine, name = 'download datasets', args = ()).start()
-            while state['downloading'] or state['futures'] != {}:
-                for key, future in list(state['futures'].items()):
-                    if future.done():
-                        dataset = future.result()
-                        fp_out.write(json.dumps(dataset) + '\n')
-                        del(state['futures'][key])
-                        logger.debug('In line for snowflaking: %s' % state['futures'].keys())
-        except BrokenProcessPool:
-            logger.error('Error at this state: %s' % state)
-            raise
+        while True:
+            if len(futures) < 5:
+                try:
+                    dataset = next(datasets)
+                except StopIteration:
+                    pass
+                else:
+                    if not u.ignore(dataset):
+                        futures[(dataset['catalog'], dataset['datasetid'])] = e.submit(meta.snowflake, dataset)
+
+            for key, future in list(futures.items()):
+                if future.done():
+                    dataset = future.result()
+                    fp_out.write(json.dumps(dataset) + '\n')
+                    del(futures[key])
+                    logger.debug('In line for snowflaking: %s' % futures.keys())
 
 def graph(fp_in, fp_out):
     g = Graph()
