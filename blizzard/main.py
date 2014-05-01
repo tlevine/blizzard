@@ -4,9 +4,8 @@ import json
 import os
 import sys
 from concurrent.futures import ProcessPoolExecutor
-from concurrent.futures.process import BrokenProcessPool
-from threading import Thread
 
+from pickle_warehouse import Warehouse
 from pluplusch import pluplusch
 
 import blizzard.util as u
@@ -68,6 +67,7 @@ def graph(fp_in, fp_out):
 Fix this with downloader and pickle_warehouse
 
 def from_cache(catalog, datasetid)
+    warehouse = Warehouse('.blizzard')
     dataset_download_url(catalog, datasetid) 
 '''
 
