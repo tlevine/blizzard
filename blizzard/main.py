@@ -54,6 +54,9 @@ def index(fp_out):
                     del(futures[key])
                     logger.debug('In line for snowflaking: %s' % futures.keys())
 
+            if futures == []:
+                break
+
 def graph(fp_in, fp_out):
     g = Graph()
     for line in fp_in:
