@@ -71,7 +71,11 @@ def graph(fp_in, fp_out):
 
 def from_cache(catalog, datasetid):
     warehouse = Warehouse('.blizzard')
-    dataset_download_url(catalog, datasetid) 
+    error, response = warehouse[dataset_download_url(catalog, datasetid)]
+    if error == None:
+        return response
+    else:
+        raise error
 
 def proxies():
     if 'http_proxy' in os.environ:
