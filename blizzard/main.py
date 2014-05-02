@@ -34,7 +34,7 @@ def main():
         graph(sys.stdin, sys.stdout)
 
 def index(fp_out):
-    for dataset in pluplusch(catalogs = dl.catalogs, cache_dir = '.blizzard', proxies = proxies())
+    for dataset in pluplusch(catalogs = dl.catalogs, cache_dir = '.blizzard', proxies = proxies()):
         if not u.ignore(dataset):
             meta.snowflake(dataset)
             fp_out.write(json.dumps(dataset) + '\n')
@@ -70,7 +70,7 @@ def graph(fp_in, fp_out):
     for left, right in g.similarly_indexed_datasets():
         fp_out.write(u.dataset_url(*left) + '  <-->  ' + u.dataset_url(*right) + '\n')
 
-def from_cache(catalog, datasetid)
+def from_cache(catalog, datasetid):
     warehouse = Warehouse('.blizzard')
     dataset_download_url(catalog, datasetid) 
 
