@@ -34,6 +34,12 @@ def main():
         graph(sys.stdin, sys.stdout)
 
 def index(fp_out):
+    for dataset in pluplusch(catalogs = dl.catalogs, cache_dir = '.blizzard', proxies = proxies())
+        if not u.ignore(dataset):
+            meta.snowflake(dataset)
+            fp_out.write(json.dumps(dataset) + '\n')
+
+def index_threaded(fp_out):
     datasets = pluplusch(catalogs = dl.catalogs, cache_dir = '.blizzard', proxies = proxies())
     futures = {}
     with ProcessPoolExecutor(4) as e:
