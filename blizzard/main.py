@@ -14,9 +14,9 @@ import blizzard.download as dl
 from blizzard.nxgraph import Graph
 
 logger = logging.getLogger('blizzard')
+datadir = os.path.expanduser('~/dadawarehouse.thomaslevine.com/big/blizzard')
 
 def main():
-    datadir = os.path.expanduser('~/dadawarehouse.thomaslevine.com/big/opendatasoft')
     n_workers = 30
 
     # Logging
@@ -33,13 +33,13 @@ def main():
         graph(sys.stdin, sys.stdout)
 
 def index(fp_out):
-    for dataset in pluplusch(catalogs = dl.catalogs, cache_dir = '.blizzard', proxies = proxies()):
+    for dataset in pluplusch(catalogs = dl.catalogs, cache_dir = datadir, proxies = proxies()):
         if not u.ignore(dataset):
             meta.snowflake(dataset)
             fp_out.write(json.dumps(dataset) + '\n')
 
 def index_threaded(fp_out):
-    datasets = pluplusch(catalogs = dl.catalogs, cache_dir = '.blizzard', proxies = proxies())
+    datasets = pluplusch(catalogs = dl.catalogs, cache_dir = datadir, proxies = proxies())
     futures = {}
     with ProcessPoolExecutor(4) as e:
         while True:
@@ -71,7 +71,7 @@ def graph(fp_in, fp_out):
 
 def from_cache(catalog, datasetid):
     warehouse = Warehouse('.blizzard')
-    error, response = warehouse[dataset_download_url(catalog, datasetid)]
+    error, response = warehouse[u.dataset_download_url(catalog, datasetid)]
     if error == None:
         return response
     else:
