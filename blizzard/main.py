@@ -70,7 +70,7 @@ def graph(fp_in, fp_out):
         fp_out.write(u.dataset_url(*left) + '  <-->  ' + u.dataset_url(*right) + '\n')
 
 def from_cache(catalog, datasetid):
-    warehouse = Warehouse('.blizzard')
+    warehouse = Warehouse(datadir)
     error, response = warehouse[u.dataset_download_url(catalog, datasetid)]
     if error == None:
         return response
